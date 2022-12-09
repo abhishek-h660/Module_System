@@ -8,29 +8,24 @@ import java.nio.file.Paths;
 class compiler {
     public static void main(String[] args) throws IOException {
         String path = args[0];
-        path=path+"\\src\\";
         
         //check for the files
-        List<String> files = getFileNames(path);
-        System.out.println("Files : ");
-        for(String p : files){
-            System.out.println(p);
-        }
-        System.out.println();
+        //List<String> files = getFileNames(path);
+        List<String> files = new ArrayList<>();
+        findModules(path+"\\src\\", files);
+        printFileNames(files);
+        
         //Segregation of files into respective modeule
         Map<String, List<String>> modules = segregate(files);
-        
-        for(Map.Entry<String, List<String>> entry : modules.entrySet()) {
-          System.out.print(entry.getKey()+" -> ");
-          for(String val : entry.getValue()) {
-            System.out.print(val+", ");
-          }
-          System.out.println();
-        }
+        printModules(modules);
+
+        //generate files
+        generateFiles(path+"\\build\\", modules);
     }
 
+    // < Deprecated !!>
     //Get the path of each file inside the src folder
-    public static List<String> getFileNames(String path) {
+    private static List<String> getFileNames(String path) {
         List<String> fileNames = new ArrayList<>();
         try {
             DirectoryStream<Path> directoryStream = Files.newDirectoryStream(Paths.get(path));
@@ -41,6 +36,15 @@ class compiler {
             ex.printStackTrace();
           }
         return fileNames;
+    }
+
+    //print file paths
+    private static void printFileNames(List<String> files) {
+      System.out.println("Files : ");
+      for(String p : files){
+          System.out.println(p);
+      }
+      System.out.println();
     }
 
     //Categorise files into respective modules
@@ -76,4 +80,90 @@ class compiler {
         return modules;
     }
 
+    private static void printModules(Map<String, List<String>> modules) {
+      for(Map.Entry<String, List<String>> entry : modules.entrySet()) {
+        System.out.print(entry.getKey()+" -> ");
+        for(String val : entry.getValue()) {
+          System.out.print(val+", ");
+        }
+        System.out.println();
+      }
+    }
+
+    //Generate header files
+
+    private static void generateFiles(String root, Map<String, List<String>> modules) throws IOException {
+      FileReader reader = null;
+      BufferedReader bufferedReader = null;
+      FileWriter writerh = null, writerc = null;
+      for(Map.Entry<String, List<String>> entry : modules.entrySet()) {
+
+        writerh = new FileWriter(root + entry.getKey() + ".h");
+        writerc = new FileWriter(root + entry.getKey() + ".c");
+        writerc.append("#include '"+entry.getKey()+".h'\n");
+
+        for(String file : entry.getValue()) {
+          try {
+            reader = new FileReader(file);
+            bufferedReader = new BufferedReader(reader);
+            
+            boolean isPrivate = false;
+
+            String line = null;
+
+            while((line = bufferedReader.readLine()) != null){
+              String words[] = line.split(" ");
+              if(isPrivate) {
+                if(words[0].equals("#end_private")){
+                  isPrivate = false;
+                  continue;
+                }
+              }
+              if(words[0].equals("#private")){
+                isPrivate = true;
+                continue;
+              }
+              
+              if(isPrivate) {
+                writerh.append(line+"\n");
+              }else{
+                if(words[0].indexOf("#") >= 0){
+                  continue;
+                }
+                writerc.append(line+"\n");
+              }
+            }
+            reader.close();
+            bufferedReader.close();
+          } catch (Exception e) {
+            e.printStackTrace();
+          }
+
+        }
+        writerh.close();
+        writerc.close();
+      }
+    }
+
+
+
+    //Recursively find the files
+    private static void findModules(String path, List<String> fileNames) {
+      if(path.indexOf(".")>=0) {
+        return;
+      }
+
+      try {
+          DirectoryStream<Path> directoryStream = Files.newDirectoryStream(Paths.get(path));
+          for (Path p : directoryStream) {
+            if(p.toString().indexOf(".") >= 0){
+              fileNames.add(p.toString());
+            }else{
+              findModules(p.toString(), fileNames);
+            }
+          }
+        } catch (IOException ex) {
+          ex.printStackTrace();
+        }
+    }
 }
