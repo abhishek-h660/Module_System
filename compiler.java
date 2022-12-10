@@ -58,6 +58,9 @@ class compiler {
             String line = br.readLine();
 
             reader.close();
+            if(line == null) {
+              continue;
+            }
             String res[] = line.split(" ");
 
             if(!res[0].equals("#module")){
@@ -101,36 +104,47 @@ class compiler {
         writerh = new FileWriter(root + entry.getKey() + ".h");
         writerc = new FileWriter(root + entry.getKey() + ".c");
         writerc.append("#include '"+entry.getKey()+".h'\n");
+        writerh.append("#pragma once\n");
 
         for(String file : entry.getValue()) {
           try {
             reader = new FileReader(file);
             bufferedReader = new BufferedReader(reader);
             
-            boolean isPrivate = false;
+            boolean isPublic = false;
 
             String line = null;
 
             while((line = bufferedReader.readLine()) != null){
               String words[] = line.split(" ");
-              if(isPrivate) {
-                if(words[0].equals("#end_private")){
-                  isPrivate = false;
+              if(isPublic) {
+                if(words[0].equals("#end_public")){
+                  isPublic = false;
                   continue;
                 }
               }
-              if(words[0].equals("#private")){
-                isPrivate = true;
+              if(words[0].equals("#public")){
+                isPublic = true;
                 continue;
               }
               
-              if(isPrivate) {
-                writerh.append(line+"\n");
-              }else{
-                if(words[0].indexOf("#") >= 0){
-                  continue;
+              if(words[0].indexOf("#") >= 0){
+                continue;
+              }
+              
+              writerc.append(line+"\n");
+              if(isPublic) {
+                for (int i=0; i<line.length(); i++){
+                  if(line.charAt(i) == '{'){
+                    writerh.append(";");
+                  }else if(line.charAt(i) == '}'){
+                    continue;
+                  }else{
+                    writerh.append(line.charAt(i));
+                  }
                 }
-                writerc.append(line+"\n");
+                isPublic = false;
+                writerh.append("\n");
               }
             }
             reader.close();
