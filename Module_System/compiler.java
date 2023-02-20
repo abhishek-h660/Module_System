@@ -23,7 +23,7 @@ class compiler {
         //check for the files
         //List<String> files = getFileNames(path);
         List<String> files = new ArrayList<>();
-        findModules(path+"\\src\\", files);
+        findModules(path+"/src/", files);
         printFileNames(files);
         
         //Segregation of files into respective modeule
@@ -31,7 +31,7 @@ class compiler {
         printModules(modules);
 
         //generate files
-        generateFiles(path+"\\build\\", modules);
+        generateFiles(path+"/build/", modules);
     }
 
     // < Deprecated !!>

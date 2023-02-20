@@ -1,0 +1,7 @@
+version: '1'
+services:
+  compiler:
+    build:
+      context: ./Module_System
+      dockerfile: /Dockerfile
+  

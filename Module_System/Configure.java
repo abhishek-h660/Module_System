@@ -18,7 +18,7 @@ public class Configure {
         for(String link : list){
             //System.out.println(link);
             String name = link.substring(link.lastIndexOf('/')+1);
-            String fileName = "./../Module_System_Test/build/"+name;
+            String fileName = "./Module_System_Test/build/"+name;
             URL url  = new URL( link );
             HttpURLConnection http = (HttpURLConnection)url.openConnection();
             Map< String, List< String >> header = http.getHeaderFields();
@@ -56,7 +56,7 @@ public class Configure {
         FileReader reader = null;
         BufferedReader br = null;
         try{
-            reader = new FileReader("./../Module_System_Test/.config");
+            reader = new FileReader("./Module_System_Test/.config");
             br = new BufferedReader(reader);
             String line = null;
             do{
