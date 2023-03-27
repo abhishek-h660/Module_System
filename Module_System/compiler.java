@@ -32,6 +32,24 @@ class compiler {
 
         //generate files
         generateFiles(path+"/build/", modules);
+
+        //Run shell commands
+      
+
+        //Object file generation commands
+        List<String> linkerCmds = new ArrayList<>();
+        linkerCmds.add("gcc");
+        linkerCmds.add("main.o");
+        //makeObjectCommands("/abhishek/Module_System_Test/build/main.c");
+        for(Map.Entry<String, List<String>> entry : modules.entrySet()){
+          makeObjectCommands("/abhishek/Module_System_Test/build/"+entry.getKey()+".c");
+          linkerCmds.add(entry.getKey()+".o");
+        }
+
+        makeObjectCommands("/abhishek/Module_System_Test/build/main.c");
+
+        linkerCommand(linkerCmds);
+        
     }
 
     // < Deprecated !!>
@@ -74,7 +92,7 @@ class compiler {
             }
             String res[] = line.split(" ");
 
-            if(!res[0].equals("#module")){
+            if(!res[0].equals("##module")){
               System.out.println("module is not defined");
             }else{
               List<String> moduleList = modules.get(res[1]);
@@ -113,7 +131,7 @@ class compiler {
 
         writerh = new FileWriter(root + entry.getKey() + ".h");
         writerc = new FileWriter(root + entry.getKey() + ".c");
-        writerc.append("#include '"+entry.getKey()+".h'\n");
+        writerc.append("#include \""+entry.getKey()+".h\"\n");
         writerh.append("#pragma once\n");
 
         for(String file : entry.getValue()) {
@@ -128,17 +146,17 @@ class compiler {
             while((line = bufferedReader.readLine()) != null){
               String words[] = line.split(" ");
               if(isPublic) {
-                if(words[0].equals("#end_public")){
+                if(words[0].equals("##end_public")){
                   isPublic = false;
                   continue;
                 }
               }
-              if(words[0].equals("#public")){
+              if(words[0].equals("##public")){
                 isPublic = true;
                 continue;
               }
               
-              if(words[0].indexOf("#") >= 0){
+              if(words[0].indexOf("##") >= 0){
                 continue;
               }
               
@@ -190,4 +208,56 @@ class compiler {
           ex.printStackTrace();
         }
     }
-}
+
+    private static void makeObjectCommands(String cmd){
+      ProcessBuilder processBuilder = new ProcessBuilder();
+      System.out.println("commands : "+cmd);
+      processBuilder.command("gcc", "-O", "-c",cmd);
+      try {
+        Process process = processBuilder.start();
+        int exitVal = process.waitFor();
+        
+        if (exitVal == 0) {
+          System.out.println("Success!");
+		    } else {
+          System.out.println("Failed !");
+          System.out.println(exitVal);
+          BufferedReader reader = new BufferedReader(
+				  new InputStreamReader(process.getErrorStream()));
+
+          String line;
+          while ((line = reader.readLine()) != null) {
+            System.out.println(line);
+          }
+		    }
+      } catch (Exception e) {
+        System.out.println("Failed ..");
+        e.printStackTrace();
+      }
+    }
+
+    private static void linkerCommand(List<String> cmd) {
+      ProcessBuilder processBuilder = new ProcessBuilder(cmd);
+      try {
+        Process process = processBuilder.start();
+        int exitVal = process.waitFor();
+        
+        if (exitVal == 0) {
+          System.out.println("Success!");
+		    } else {
+          System.out.println("Failed !");
+          System.out.println(exitVal);
+          BufferedReader reader = new BufferedReader(
+				  new InputStreamReader(process.getErrorStream()));
+
+          String line;
+          while ((line = reader.readLine()) != null) {
+            System.out.println(line);
+          }
+		    }
+      } catch (Exception e) {
+        System.out.println("Failed ..");
+        e.printStackTrace();
+      }
+    }
+} 

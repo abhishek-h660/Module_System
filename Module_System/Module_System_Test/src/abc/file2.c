@@ -1,7 +1,9 @@
-#module abc
+##module abc
 
-#private
+#include <stdio.h>
+
+##private
 void say() {
     printf("This says Hii !");
 }
-#end_private
+##end_private
