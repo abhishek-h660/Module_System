@@ -1,13 +1,15 @@
-#module abc
+##module abc
 
-#private
-void math() {
-    printf("This is private math method");
+#include <stdio.h>
+
+##private
+void math(int x, int y) {
+    printf("Got x and y");
 }
-#end_private
+##end_private
 
-#public 
+##public 
 void callMath() {
-    math();
+    math(6, 5);
 }
-#end_public
+##end_public
