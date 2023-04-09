@@ -25,12 +25,6 @@ WORKDIR /abhishek/
 COPY . /abhishek/
 
 RUN javac Configure.java
-RUN javac compiler.java
-RUN java compiler "/abhishek/Module_System_Test"
+RUN javac entry.java
+ENTRYPOINT [ "java", "entry" ]
 
-RUN ls
-RUN pwd
-RUN ls Module_System_Test/build/
-
-RUN ls
-RUN ./a.out

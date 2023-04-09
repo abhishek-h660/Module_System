@@ -39,6 +39,7 @@ class compiler {
         //Object file generation commands
         List<String> linkerCmds = new ArrayList<>();
         linkerCmds.add("gcc");
+        
         linkerCmds.add("main.o");
         //makeObjectCommands("/abhishek/Module_System_Test/build/main.c");
         for(Map.Entry<String, List<String>> entry : modules.entrySet()){
