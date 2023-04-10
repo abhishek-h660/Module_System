@@ -11,6 +11,10 @@ RUN apt-get update && \
     apt-get clean && \
     update-ca-certificates -f;
 
+# Install Vim
+RUN apt-get update && \
+    apt-get install -y vim
+
 # Setup JAVA_HOME -- useful for docker commandline
 ENV JAVA_HOME /usr/lib/jvm/java-8-openjdk-amd64/
 RUN export JAVA_HOME
