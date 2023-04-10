@@ -38,12 +38,19 @@ public class Configure {
             }
             StringBuilder encoded = new StringBuilder();
             for(int i=response.indexOf("\"content\"")+11; ;i++){
-                if(response.charAt(i) == '\\'){
+                if(response.charAt(i) == '=' || response.charAt(i) == '"'){
                     break;
                 }
+                if(response.charAt(i) == '\\' && i!=response.length()-1 && response.charAt(i+1) =='n'){
+                    i++;
+                    continue;
+                }
+                
                 encoded.append(response.charAt(i));
             }
             //System.out.println(encoded);
+          
+            
             byte[] content = Base64.getDecoder().decode(encoded.toString().getBytes());
             FileWriter output = new FileWriter( fileName );
             output.append(new String(content));
