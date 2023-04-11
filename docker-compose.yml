@@ -3,5 +3,5 @@ services:
   compiler:
     build:
       context: ./Module_System
-      dockerfile: /Dockerfile
+      dockerfile: ./Dockerfile
     

@@ -13,8 +13,9 @@ import java.util.*;
 
 public class Configure {
     
-    public static void Config() throws Throwable{
+    public static List<String> Config() throws Throwable{
         ArrayList<String> list = GetDependencies();
+        List<String> list1=new ArrayList<>();
         for(String link : list){
             //System.out.println(link);
             String name = link.substring(link.lastIndexOf('/')+1);
@@ -38,17 +39,31 @@ public class Configure {
             }
             StringBuilder encoded = new StringBuilder();
             for(int i=response.indexOf("\"content\"")+11; ;i++){
-                if(response.charAt(i) == '\\'){
+                if(response.charAt(i) == '='||response.charAt(i) == '"'){
                     break;
                 }
+                if(response.charAt(i) == '\\'&&i!=response.length()-1&&response.charAt(i+1)=='n'){i++;continue;}
                 encoded.append(response.charAt(i));
             }
-            //System.out.println(encoded);
+            // mutable encodedContent;
+            // for(int i=0;i<encoded.length()-1;i++)
+            // {
+            //     if(encoded.charAt(i) == '/' && encoded.charAt(i+1)=='n')continue;
+            //     encodedContent.
+            // }
+            
+            System.out.println(encoded);
             byte[] content = Base64.getDecoder().decode(encoded.toString().getBytes());
             FileWriter output = new FileWriter( fileName );
             output.append(new String(content));
             output.close();
+            
+            System.out.println("Internet file "+name+" is available");
+            
+            list1.add(name);
+            
         }
+        return list1;
     }
     
     public static ArrayList<String> GetDependencies() throws IOException {
@@ -81,4 +96,6 @@ public class Configure {
         }
         return false;
     }
+
+
 }

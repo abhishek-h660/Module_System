@@ -9,11 +9,11 @@ class compiler {
     public static void main(String[] args) throws IOException {
         //Expects Target path at command line
         String path = args[0];
-        
+        List<String> list1=new ArrayList<>();
         //Include the depencencies from internet
         Configure config = new Configure();
         try {
-          config.Config();
+          list1=config.Config();
         }catch (Throwable e) {
           // TODO Auto-generated catch block
           e.printStackTrace();
@@ -41,11 +41,18 @@ class compiler {
         linkerCmds.add("gcc");
         
         linkerCmds.add("main.o");
+        for(String file:list1){
+          String file1=file.substring(0, file.length()-2);
+          modules.put(file1, new ArrayList<>());
+          
+        }
+        
         //makeObjectCommands("/abhishek/Module_System_Test/build/main.c");
         for(Map.Entry<String, List<String>> entry : modules.entrySet()){
           makeObjectCommands("/abhishek/Module_System_Test/build/"+entry.getKey()+".c");
           linkerCmds.add(entry.getKey()+".o");
         }
+        
 
         makeObjectCommands("/abhishek/Module_System_Test/build/main.c");
 
