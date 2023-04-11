@@ -5,7 +5,10 @@
 int main()
 {
     callMath();
+    printf("\n");
     sayHello();
+    printf("\n");
     callDependency();
+    printf("\n");
     return 0;
 }
