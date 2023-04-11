@@ -1,7 +1,9 @@
-version: '1'
+version: '2'
 services:
   compiler:
     build:
       context: ./Module_System
       dockerfile: ./Dockerfile
-    
+    command: "-f /dev/null"
+    entrypoint: /usr/bin/tail
+    tty: true
