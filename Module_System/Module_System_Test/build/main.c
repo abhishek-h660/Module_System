@@ -1,11 +1,15 @@
 #include <stdio.h>
-#include "./abc.h"
-#include "./def.h"
+#include "./character1.h"
+#include "./character2.h"
 #include "./test1.h"
 int main()
 {
-    callMath();
-    sayHello();
+    callForwardMovementC1();
+    
+    callBackwardMovementC1();
+    callForwardMovementC2();
+    callBackwardMovementC2();
+    callForwardMovementC3();
     callDependency();
     return 0;
 }
